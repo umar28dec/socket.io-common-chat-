@@ -1,0 +1,157 @@
+
+<!DOCTYPE html><html>
+<head>
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
+<link rel='stylesheet prefetch' href='style.css'>
+<link rel='stylesheet prefetch' href='font-awesome.min.css'>
+
+<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'><link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
+<script src='jquery-2.2.4.min.js'></script>
+<script src='socket.io.js'></script>
+<script src='main.js'></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+		if (!Notification) {
+		  alert('Desktop notifications not available in your browser. Try Chromium.'); 
+		  return;
+		}
+	   
+		if (Notification.permission !== "granted")
+		  Notification.requestPermission();
+	  });
+	 
+	  </script>
+</head><body>
+				<div class="container-fluid">
+					<div class="row" id="login">
+			<div class="col-sm-12">			
+				<div class="form-group">
+						<label for="pwd">Name:</label>
+						<input type="text" class="form-control" id="pwd" placeholder="Enter name" name="pwd">
+					  </div>
+					</div>
+				</div>
+			</div>
+			
+<div id="frame" class="" style="display: none;">
+	<div id="sidepanel">
+		<div id="profile">
+			<div class="wrap">
+				<img id="profile-img" src="mikeross.png" class="online" alt="" />
+				<p id="me">Umar Farooque Khan</p>
+				<i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
+				<div id="status-options">
+					<ul>
+						<li id="status-online" class="active"><span class="status-circle"></span> <p>Online</p></li>
+						<li id="status-away"><span class="status-circle"></span> <p>Away</p></li>
+						<li id="status-busy"><span class="status-circle"></span> <p>Busy</p></li>
+						<li id="status-offline"><span class="status-circle"></span> <p>Offline</p></li>
+					</ul>
+				</div>
+				<div id="expanded">
+					<label for="twitter"><i class="fa fa-facebook fa-fw" aria-hidden="true"></i></label>
+					<input name="twitter" type="text" value="mikeross" />
+					<label for="twitter"><i class="fa fa-twitter fa-fw" aria-hidden="true"></i></label>
+					<input name="twitter" type="text" value="ross81" />
+					<label for="twitter"><i class="fa fa-instagram fa-fw" aria-hidden="true"></i></label>
+					<input name="twitter" type="text" value="mike.ross" />
+				</div>
+			</div>
+		</div>
+		<div id="search">
+			<label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
+			<input type="text" placeholder="Search contacts..." />
+		</div>
+		<div id="contacts">
+			<ul id="list">							
+			</ul>
+		</div>
+		<div id="bottom-bar">
+			<button id="addcontact"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Total User: <span id="count">55<span</span></button>
+			<button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span></button>
+		</div>
+	</div>
+	<div class="content">
+		<div class="contact-profile">			
+			<p style="margin-left: px;">Chat to All</p>
+			<div class="connecting"></div>
+			<div class="social-media">
+				<i class="fa fa-facebook" aria-hidden="true"></i>
+				<i class="fa fa-twitter" aria-hidden="true"></i>
+				 <i class="fa fa-instagram" aria-hidden="true"></i>
+			</div>
+		</div>
+		<div class="messages">
+			<ul id="message">
+			</ul>
+		</div>
+		<div class="message-input">
+			<div class="typing" id="typing" style="display: none">Umar is typing.....</div>
+			<div class="wrap">
+			<input type="text" id="message-text" value="" placeholder="Write your message...">
+			
+			<i class="fa fa-paperclip attachment" aria-hidden="true"></i>
+			<button id="sub" class="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script >
+
+$("#profile-img").click(function() {
+	$("#status-options").toggleClass("active");
+});
+
+$(".expand-button").click(function() {
+  $("#profile").toggleClass("expanded");
+	$("#contacts").toggleClass("expanded");
+});
+
+$("#status-options ul li").click(function() {
+	$("#profile-img").removeClass();
+	$("#status-online").removeClass("active");
+	$("#status-away").removeClass("active");
+	$("#status-busy").removeClass("active");
+	$("#status-offline").removeClass("active");
+	$(this).addClass("active");
+	
+	if($("#status-online").hasClass("active")) {
+		$("#profile-img").addClass("online");
+	} else if ($("#status-away").hasClass("active")) {
+		$("#profile-img").addClass("away");
+	} else if ($("#status-busy").hasClass("active")) {
+		$("#profile-img").addClass("busy");
+	} else if ($("#status-offline").hasClass("active")) {
+		$("#profile-img").addClass("offline");
+	} else {
+		$("#profile-img").removeClass();
+	};
+	
+	$("#status-options").removeClass("active");
+});
+
+function newMessage() {
+	message = $(".message-input input").val();
+	if($.trim(message) == '') {
+		return false;
+	}
+	$('<li class="sent"><img src="mikeross.png" alt="" /><p>' + message + '</p></li>').appendTo($('.messages ul'));
+	$('.message-input input').val(null);
+	$('.contact.active .preview').html('<span>You: </span>' + message);
+	$(".messages").animate({ scrollTop: $(document).height() }, "fast");
+};
+
+$('.submit').click(function() {
+  newMessage();
+});
+
+$(window).on('keydown', function(e) {
+  if (e.which == 13) {
+    newMessage();
+    return false;
+  }
+});
+//# sourceURL=pen.js
+</script>
+</body></html>
