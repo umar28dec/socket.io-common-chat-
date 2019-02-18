@@ -52,6 +52,7 @@ server.listen(port, () => {
           data:socket.username+ ' is typing.....',
           msg:data,
           user:userArr,
+          datetime:dateTime()
         });
       
   });
@@ -72,5 +73,19 @@ server.listen(port, () => {
     });
 });
 });
+function dateTime(){
+  var resp="";
+  var d = new Date();
+  var h = addZero(d.getHours());
+  var m = addZero(d.getMinutes());
+  var s = addZero(d.getSeconds());
+  resp = h + ":" + m + ":" + s;
+  return resp
+}
 
-
+function addZero(i) {
+  if (i < 10) {
+    i = "0" + i;
+  }
+  return i;
+}

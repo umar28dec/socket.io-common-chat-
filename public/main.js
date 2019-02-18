@@ -1,5 +1,4 @@
 var socket = io();
-var users=[];
 $(function() {
     socket.on('connect', function() {
         socket.on('disconnect', () => {
@@ -7,11 +6,14 @@ $(function() {
         });
 
         socket.on('reconnect', () => {
+          console.log('you have been disconnected');
             $(".connecting").html('<p  style="color: green">Reconnected</p>');
-            $(".connecting").hide(5000);
+            $(".connecting").hide();
+            $("#indian").show();
         });
 
         socket.on('reconnect_error', () => {
+          console.log('you have been disconnected');
             $("#indian").hide();
             $(".connecting").html('<p  style="color: red">Disconnected....... trying to connect</p>');
         });
@@ -70,7 +72,8 @@ $(function() {
         }
     });
     socket.on('send message to all', (data) => {
-        var msg = '<li class="sent"><img src="mikeross.png" alt="" /><p>' + data.msg + '</p></li>';
+      console.log(data);
+        var msg = '<li class="sent"><img src="mikeross.png" alt="" /><p>' + data.msg + '</p><p>'+data.datetime+'</p></li>';
         messagetext(msg);
         data.user.forEach(function(entry, index) {
          $('#'+entry.id).text(entry.count);
@@ -177,8 +180,5 @@ vis(function(){
     setTimeout(function(){
       $(".common-inactive").hide();
     },5000)
-    userCount.forEach(function(entry, index) {
-      console.log(entry);
-  });
   }
   });
