@@ -18,7 +18,7 @@ server.listen(port, () => {
   socket.on('user list', (username) => {
     socket.username=username;
     totalNumberOfUser=totalNumberOfUser+1;
-    userArr.push({name:username,id:socket.id});
+    userArr.push({name:username,id:socket.id,count:0});
 
     io.emit('update count', {
         count: totalNumberOfUser,
@@ -34,14 +34,24 @@ server.listen(port, () => {
   socket.on('typing', (data) => { 
       socket.broadcast.emit('typing to all', {
         data:socket.username+ ' is typing.....',
-        type:data
+        type:data,
       });
     });
+    socket.on('status of tab', () => { 
+      socket.broadcast.emit('status of tab client','');
+    });
+   
 
       socket.on('send message', (data) => { 
-        socket.broadcast.emit('typing to all', {
+        userArr.forEach(function(entry, index) {
+          if(entry.id==socket.id){   
+            entry.count=entry.count+1;
+          }
+      });
+        socket.broadcast.emit('send message to all', {
           data:socket.username+ ' is typing.....',
-          type:data
+          msg:data,
+          user:userArr,
         });
       
   });

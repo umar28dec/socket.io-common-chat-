@@ -695,6 +695,15 @@ body {
   margin: 10px !important;
   text-transform: capitalize;
 }
+.common-inactive{
+    text-align: center;
+    background: #fff3cd;
+    color:gray;
+    border-radius: 20px;
+    padding: 7px;
+    margin: 10px !important;
+    text-transform: capitalize;
+}
 .typing{
   padding: 12px;
   background: white;
@@ -706,4 +715,8 @@ body {
 #me{
   text-transform: capitalize;
 
+}
+.red{
+  color: red;
+  font-weight: 800;
 }
