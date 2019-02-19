@@ -13,6 +13,8 @@
 <script src='main.js'></script>
 <script src="emoji.js"></script>
 <script> 
+ var sticker='';
+ $("#message").text();
 document.addEventListener('DOMContentLoaded', function () {
 		if (!Notification) {
 		  alert('Desktop notifications not available in your browser. Try Chromium.'); 
@@ -100,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				<div>	  
 					<input type="text" id="message-text" value="" placeholder="Write your message...">
 					<i class="fa fa-paperclip attachment" aria-hidden="true"></i>
-					<button id="sub" class="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+					<button id="su1b" onclick="submsg()" class="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
 				</div>
 			</div>
 		</div>

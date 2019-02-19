@@ -2,13 +2,11 @@ $(document).on("click","#emoji-picker",function(e){
     e.stopPropagation();
      $('.intercom-composer-emoji-popover').toggleClass("active");
  });
- 
  $(document).click(function (e) {
      if ($(e.target).attr('class') != '.intercom-composer-emoji-popover' && $(e.target).parents(".intercom-composer-emoji-popover").length == 0) {
          $(".intercom-composer-emoji-popover").removeClass("active");
      }
  });
- var sticker='';
  $(document).on("click",".intercom-emoji-picker-emoji",function(e){
      sticker+=$(this).html();
      $("#message-text").val(sticker);

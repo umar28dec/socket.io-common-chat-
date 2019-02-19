@@ -37,7 +37,7 @@ $(function() {
         $("#count").text(data.count);
         var users = '';
         data.user.forEach(function(entry, index) {
-            users += '<li class="contact"><div class="wrap"><span class="contact-status online"></span><img src="mikeross.png" alt="" /><div class="meta"><p class="name">' + entry.name + '</p><span id='+entry.id+' class="red">'+removeZero(entry.count)+'</span><p class="preview">You just got LITT up, Mike.</p></div></div></li>';
+            users += '<li class="contact"><div class="wrap"><span class="contact-status online"></span><img src="mikeross.png" alt="" /><div class="meta"><p class="name">' + entry.name + '</p><span id='+entry.id+' class="red">'+removeZero(entry.count)+'</span><p class="preview">'+entry.ip+'<span class="country" id=ip_'+entry.id+'>'+entry.country+'</span></p></div></div></li>';
         });
         $("#list").html(users);
     });
@@ -50,6 +50,11 @@ $(function() {
         }
         messagetext(message1);
     });
+
+    socket.on('update country', (data) => {
+        $('#ip_'+data.id).text(data.country);
+    });
+    
 
     $("#message-text").bind('keyup keypres', function() {
         var msg = $("#message-text").val();
@@ -72,8 +77,7 @@ $(function() {
         }
     });
     socket.on('send message to all', (data) => {
-      console.log(data);
-        var msg = '<li class="sent"><img src="mikeross.png" alt="" /><p>' + data.msg + '</p><p>'+data.datetime+'</p></li>';
+        var msg = '<li class="sent"><img src="mikeross.png" alt="" /><p>' + data.msg + '</p><div class="time">'+data.datetime+'</div></li>';
         messagetext(msg);
         data.user.forEach(function(entry, index) {
          $('#'+entry.id).text(entry.count);
@@ -85,7 +89,7 @@ $(function() {
         if(notification=='Not-Active' && !visible){
           var message1 = '<li class="common-inactive">You Have Unread Messages</li>';
           messagetext(message1);
-          notifyMe();
+        //   notifyMe();
         }
         setTimeout(function(){
           // $(".common-inactive").hide();
@@ -103,9 +107,7 @@ $(function() {
         }
     });
 
-    $('#sub').click(function() {
-        sendMessage();
-    })
+    
 
 
 
@@ -147,15 +149,16 @@ const removeZero = (value) => {
 }
 
 
-const sendMessage = (message1) => {
+const sendMessage = () => {
     var msg = $("#message-text").val();
     if (msg) {
-        var k = '<li class="replies"><img src="mikeross.png" alt="" /><p>' + msg + '</p></li>';
+        var k = '<li class="replies"><img src="mikeross.png" alt="" /><p>' + msg + '</p><div class="time1">'+dateTime()+'</div></li>';
         messagetext(k);
         socket.emit('status of tab');
         socket.emit('send message', msg);
         $("#message-text").val('');
         scrollToBottom();
+        sticker="";
     }
 }
 
@@ -182,3 +185,31 @@ vis(function(){
     },5000)
   }
   });
+  function submsg(){
+    var msg = $("#message-text").val();
+if (msg) {
+    var k = '<li class="replies"><img src="mikeross.png" alt="" /><p>' + msg + '</p><div class="time1">'+dateTime()+'</div></li>';
+    messagetext(k);
+    socket.emit('status of tab');
+    socket.emit('send message', msg);
+    $("#message-text").val('');
+    scrollToBottom();
+    sticker="";
+}
+}
+
+function dateTime(){
+    var resp="";
+    var d = new Date();
+    var h = addZero(d.getHours());
+    var m = addZero(d.getMinutes());
+    var s = addZero(d.getSeconds());
+    resp = h + ":" + m + ":" + s;
+    return resp
+  }
+  function addZero(i) {
+    if (i < 10) {
+      i = "0" + i;
+    }
+    return i;
+  }

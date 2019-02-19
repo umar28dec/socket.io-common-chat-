@@ -3,6 +3,7 @@ var app = express();
 var path = require('path');
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
+const iplocation = require("iplocation").default;
 var port = process.env.PORT || 3001;
 
 var userArr=[];
@@ -14,12 +15,30 @@ server.listen(port, () => {
   });
   
   io.on('connection', (socket) => {
-       
   socket.on('user list', (username) => {
     socket.username=username;
     totalNumberOfUser=totalNumberOfUser+1;
-    userArr.push({name:username,id:socket.id,count:0});
-
+    var ip = socket.handshake.address;
+    var country="";
+    if(ip=='::1'){
+      ip="103.211.19.251";
+    }
+    iplocation(ip)
+    .then((res) => {
+      country=res.city + " ( "+res.country+" )";
+      userArr.forEach(function(entry, index) {
+        if(entry.id==socket.id){   
+          entry.country=country;
+        }
+        io.emit('update country', {
+          id: socket.id,
+          country:country,
+        });
+    });
+    })
+    .catch(err => {
+    });
+    userArr.push({name:username,id:socket.id,count:0,ip:ip,country:country});
     io.emit('update count', {
         count: totalNumberOfUser,
         user:userArr,
@@ -42,7 +61,7 @@ server.listen(port, () => {
     });
    
 
-      socket.on('send message', (data) => { 
+      socket.on('send message', (data) => {
         userArr.forEach(function(entry, index) {
           if(entry.id==socket.id){   
             entry.count=entry.count+1;

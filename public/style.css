@@ -594,7 +594,7 @@ body {
 #frame .content .messages ul li p {
   display: inline-block;
   padding: 5px 10px;
-  border-radius: 20px;
+  border-radius: 5px;
   max-width: 205px;
   line-height: 130%;
 }
@@ -720,4 +720,26 @@ body {
 .red{
   color: red;
   font-weight: 800;
+}
+.country{
+  margin-left: 10px !important;
+  color:white;
+  font-weight: 600;
+}
+
+
+.time {
+  left: 50px;
+  display: block;
+  font-size: 12px;
+  float: right;
+   width: 100%;
+
+}
+.time1 {
+  left: 40px;
+  font-size: 12px;
+  float: right;
+  top: 30px;
+
 }
