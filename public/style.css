@@ -543,8 +543,8 @@ body {
 }
 #frame .content .messages {
   height: auto;
-  min-height: calc(100% - 93px);
-  max-height: calc(100% - 93px);
+  min-height: calc(100% - 145px);
+  max-height: calc(100% - 145px);
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -620,6 +620,7 @@ body {
   padding: 11px 32px 10px 8px;
   font-size: 0.8em;
   color: #32465a;
+  text-indent: 50px;
 }
 @media screen and (max-width: 735px) {
   #frame .content .message-input .wrap input {
@@ -631,9 +632,9 @@ body {
 }
 #frame .content .message-input .wrap .attachment {
   position: absolute;
-  right: 60px;
+  right: 68px;
   z-index: 4;
-  margin-top: 10px;
+  top: 12px;
   font-size: 1.1em;
   color: #435f7a;
   opacity: .5;
