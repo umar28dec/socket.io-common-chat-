@@ -60,19 +60,29 @@ server.listen(port, () => {
       socket.broadcast.emit('status of tab client','');
     });
    
-
+var socketid1="";
       socket.on('send message', (data) => {
+       socketid1=data.id;
         userArr.forEach(function(entry, index) {
           if(entry.id==socket.id){   
             entry.count=entry.count+1;
           }
       });
-        socket.broadcast.emit('send message to all', {
+        // socket.broadcast.emit('send message to all', {
+        //   data:socket.username+ ' is typing.....',
+        //   msg:data,
+        //   user:userArr,
+        //   datetime:dateTime()
+        // });
+
+io.to(socketid1).emit('send message to all', {
           data:socket.username+ ' is typing.....',
           msg:data,
           user:userArr,
           datetime:dateTime()
         });
+
+         // io.to(`${socketId}`).emit('hey', 'I just met you');
       
   });
   socket.on('disconnect', () => {

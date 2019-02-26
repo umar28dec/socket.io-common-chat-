@@ -37,7 +37,7 @@ $(function() {
         $("#count").text(data.count);
         var users = '';
         data.user.forEach(function(entry, index) {
-            users += '<li class="contact"><div class="wrap"><span class="contact-status online"></span><img src="mikeross.png" alt="" /><div class="meta"><p class="name">' + entry.name + '</p><span id='+entry.id+' class="red">'+removeZero(entry.count)+'</span><p class="preview">'+entry.ip+'<span class="country" id=ip_'+entry.id+'>'+entry.country+'</span></p></div></div></li>';
+            users += '<li onclick="setID('+"'"+entry.id+"'"+')" class="contact"><div class="wrap"><span class="contact-status online"></span><img src="mikeross.png" alt="" /><div class="meta"><p class="name">' + entry.name + '</p><span id='+entry.id+' class="red">'+removeZero(entry.count)+'</span><p class="preview">'+entry.ip+'<span class="country" id=ip_'+entry.id+'>'+entry.country+'</span></p></div></div></li>';
         });
         $("#list").html(users);
     });
@@ -155,10 +155,11 @@ const sendMessage = () => {
         var k = '<li class="replies"><img src="mikeross.png" alt="" /><p>' + msg + '</p><div class="time1">'+dateTime()+'</div></li>';
         messagetext(k);
         socket.emit('status of tab');
-        socket.emit('send message', msg);
+        socket.emit('send message', {msg:msg,id:socketId});
         $("#message-text").val('');
         scrollToBottom();
         sticker="";
+
     }
 }
 
@@ -212,4 +213,8 @@ function dateTime(){
       i = "0" + i;
     }
     return i;
+  }
+
+  function setID(id){
+ socketId=id;
   }
