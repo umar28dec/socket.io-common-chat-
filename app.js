@@ -8,6 +8,7 @@ var port = process.env.PORT || 3001;
 
 var userArr=[];
 var totalNumberOfUser=0;
+var socketid1="";
 app.use(express.static('public'))
 
 server.listen(port, () => {
@@ -49,9 +50,13 @@ server.listen(port, () => {
       });
       
   });
+
+  socket.on('socket id',(data)=>{
+    socketid1=data;
+  })
   
   socket.on('typing', (data) => { 
-      socket.broadcast.emit('typing to all', {
+    io.to(socketid1).emit('typing to all', {
         data:socket.username+ ' is typing.....',
         type:data,
       });
@@ -61,18 +66,22 @@ server.listen(port, () => {
     });
    
 
-      socket.on('send message', (data) => {
+      socket.on('send message', (data) => { 
+       socketid1=data.id;
         userArr.forEach(function(entry, index) {
           if(entry.id==socket.id){   
             entry.count=entry.count+1;
           }
       });
-        socket.broadcast.emit('send message to all', {
+       
+io.to(socketid1).emit('send message to all', {
           data:socket.username+ ' is typing.....',
-          msg:data,
+          msg:data.msg,
           user:userArr,
           datetime:dateTime()
         });
+
+         // io.to(`${socketId}`).emit('hey', 'I just met you');
       
   });
   socket.on('disconnect', () => {
