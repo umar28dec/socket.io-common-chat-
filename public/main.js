@@ -21,12 +21,18 @@ $(function() {
     })
     $('#pwd').focus();
     $('#pwd').keydown(function(e) {
-        if (e.which == 13) {
+        if (e.which == 13) {    
+            var user = $("#pwd").val();     
+            if(user){
             $('#login').hide();
             $('#frame').show();
-            var user = $("#pwd").val();
             $('#message-text').focus();
             $('#me').text(user);
+            }else{
+                alert('Please enter name');
+                e.preventDefault();
+                return false;
+            }
             if (user) {
                 socket.emit('user list', user);
             }
@@ -37,7 +43,13 @@ $(function() {
         $("#count").text(data.count);
         var users = '';
         data.user.forEach(function(entry, index) {
-            users += '<li onclick="setID('+"'"+entry.id+"'"+')" class="contact"><div class="wrap"><span class="contact-status online"></span><img src="mikeross.png" alt="" /><div class="meta"><p class="name">' + entry.name + '</p><span id='+entry.id+' class="red">'+removeZero(entry.count)+'</span><p class="preview">'+entry.ip+'<span class="country" id=ip_'+entry.id+'>'+entry.country+'</span></p></div></div></li>';
+            if(entry.id !=socket.id){
+                users += '<li onclick="setID('+"'"+entry.id+"'"+')" class="contact"><div class="wrap"><span class="contact-status online"></span><img src="mikeross.png" alt="" /><div class="meta"><p class="name">' + entry.name + '</p><span id='+entry.id+' class="red">'+removeZero(entry.count)+'</span><p class="preview">'+entry.ip+'<span class="country" id=ip_'+entry.id+'>'+entry.country+'</span></p></div></div></li>';
+            }
+            if((data.user.length==1) && (entry.id ==socket.id)){
+                users += '<li class="contact"><div class="wrap">No User Available</div></li>';
+            
+            }
         });
         $("#list").html(users);
     });
@@ -77,6 +89,7 @@ $(function() {
         }
     });
     socket.on('send message to all', (data) => {
+        console.log(data);
         var msg = '<li class="sent"><img src="mikeross.png" alt="" /><p>' + data.msg + '</p><div class="time">'+data.datetime+'</div></li>';
         messagetext(msg);
         data.user.forEach(function(entry, index) {
@@ -102,7 +115,13 @@ $(function() {
 
     $('#message-text').keydown(function(e) {
         if (e.which == 13) {
-            sendMessage();
+            if(socketId){
+                sendMessage();
+            }else{
+                alert('Please select User to chat');
+                e.preventDefault();
+                return false;
+            }
             e.preventDefault();
         }
     });
@@ -217,4 +236,5 @@ function dateTime(){
 
   function setID(id){
  socketId=id;
+ socket.emit('socket id', socketId);
   }
