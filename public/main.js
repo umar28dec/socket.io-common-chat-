@@ -1,4 +1,4 @@
-var socket = io();
+var socket = io('localhost:3001');
 $(function() {
     socket.on('connect', function() {
         socket.on('disconnect', () => {
@@ -96,6 +96,15 @@ $(function() {
          $('#'+entry.id).text(entry.count);
       });
     });
+    socket.on('ack re', (data) => {
+        setTimeout(()=>{
+            var msg = '<li class="sent"><img src="mikeross.png" alt="" /><p>' + data.msg + '</p><div class="time">'+data.datetime+'</div></li>';
+            messagetext(msg);        
+    
+        },1000)
+    });
+    
+
     socket.on('status of tab client', () => {
         var notification = vis() ? 'Active' : 'Not-Active';
         var visible=$(".common-inactive").is(":visible");
@@ -114,14 +123,8 @@ $(function() {
 
 
     $('#message-text').keydown(function(e) {
-        if (e.which == 13) {
-            if(socketId){
-                sendMessage();
-            }else{
-                alert('Please select User to chat');
-                e.preventDefault();
-                return false;
-            }
+        if (e.which == 13) {           
+        messagetext1();
             e.preventDefault();
         }
     });
@@ -168,17 +171,17 @@ const removeZero = (value) => {
 }
 
 
-const sendMessage = () => {
+const messagetext1 = () => {
+   
     var msg = $("#message-text").val();
-    if (msg) {
+    if (msg) {         
         var k = '<li class="replies"><img src="mikeross.png" alt="" /><p>' + msg + '</p><div class="time1">'+dateTime()+'</div></li>';
         messagetext(k);
-        socket.emit('status of tab');
-        socket.emit('send message', {msg:msg,id:socketId});
+        socket.emit('ack server', {msg:msg,id:socket.id});
+        console.log(socket.id,'----ddd');
         $("#message-text").val('');
         scrollToBottom();
         sticker="";
-
     }
 }
 

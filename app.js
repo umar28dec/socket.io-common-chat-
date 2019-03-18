@@ -73,7 +73,6 @@ server.listen(port, () => {
             entry.count=entry.count+1;
           }
       });
-       
 io.to(socketid1).emit('send message to all', {
           data:socket.username+ ' is typing.....',
           msg:data.msg,
@@ -100,6 +99,16 @@ io.to(socketid1).emit('send message to all', {
         }
     });
 });
+
+socket.on('ack server', (data) => { 
+  io.to(data.id).emit('ack re', {
+    msg:'We are connecting to our agent',
+    datetime:dateTime()
+  });
+  });
+
+ 
+  
 });
 function dateTime(){
   var resp="";
