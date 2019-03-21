@@ -7,8 +7,8 @@ const iplocation = require("iplocation").default;
 var port = process.env.PORT || 3001;
 
 var userArr=[];
-var totalNumberOfUser=0;
-var socketid1="";
+var userAdminArr=[];
+
 app.use(express.static('public'))
 
 server.listen(port, () => {
@@ -16,9 +16,8 @@ server.listen(port, () => {
   });
   
   io.on('connection', (socket) => {
-  socket.on('user list', (username) => {
-    socket.username=username;
-    totalNumberOfUser=totalNumberOfUser+1;
+  socket.on('user list', (data) => { 
+    socket.username=data.user;
     var ip = socket.handshake.address;
     var country="";
     if(ip=='::1'){
@@ -39,76 +38,94 @@ server.listen(port, () => {
     })
     .catch(err => {
     });
-    userArr.push({name:username,id:socket.id,count:0,ip:ip,country:country});
+    if(data.type=='admin'){
+      socket.join('Common room');
+      userAdminArr.push({name:data.user,id:socket.id,count:0,ip:ip,country:country,connectedUser:''});
+    }else{
+      userArr.push({name:data.user,id:socket.id,count:0,ip:ip,country:country,connectedAdmin:''}); 
+    }
+    // console.log(userArr,'---',userAdminArr);
     io.emit('update count', {
-        count: totalNumberOfUser,
+        count: userArr.length,
+        countAdmin: userAdminArr.length,
         user:userArr,
       });
+
       socket.broadcast.emit('common message', {
-        username:username,
-        type:'added'
+        username:data.user,
+        type:'added',
+        userType:data.type
       });
-      
+
   });
-
-  socket.on('socket id',(data)=>{
-    socketid1=data;
-  })
-  
-  socket.on('typing', (data) => { 
-    io.to(socketid1).emit('typing to all', {
-        data:socket.username+ ' is typing.....',
-        type:data,
-      });
-    });
-    socket.on('status of tab', () => { 
-      socket.broadcast.emit('status of tab client','');
-    });
-   
-
-      socket.on('send message', (data) => { 
-       socketid1=data.id;
-        userArr.forEach(function(entry, index) {
-          if(entry.id==socket.id){   
-            entry.count=entry.count+1;
-          }
-      });
-io.to(socketid1).emit('send message to all', {
-          data:socket.username+ ' is typing.....',
-          msg:data.msg,
-          user:userArr,
-          datetime:dateTime()
-        });
-
-         // io.to(`${socketId}`).emit('hey', 'I just met you');
-      
-  });
-  socket.on('disconnect', () => {
+    socket.on('disconnect', () => { 
       userArr.forEach(function(entry,index) {
         if(entry.id==socket.id){         
-          userArr.splice(index, 1);
-          totalNumberOfUser--;
+          userArr.splice(index, 1); 
           io.emit('update count', {
-            count: totalNumberOfUser,
+            count: userArr.length,
+            countAdmin: userAdminArr.length,
             user:userArr,
-          });
+          });      
           socket.broadcast.emit('common message', {
             username:entry.name,
-            type:'left'
-          });
+            type:'left',
+            userType:'client'
+          });                        
         }
     });
+
+    userAdminArr.forEach(function(entry,index) {
+      if(entry.id==socket.id){         
+        userAdminArr.splice(index, 1);    
+        io.emit('update count', {
+          count: userArr.length,
+          countAdmin: userAdminArr.length,
+          user:userArr,
+        });      
+        socket.broadcast.emit('common message', {
+          username:entry.name,
+          type:'left',
+          userType:'admin'
+        });        
+      }
+  });
+
+
+  
+  
 });
 
-socket.on('ack server', (data) => { 
-  io.to(data.id).emit('ack re', {
-    msg:'We are connecting to our agent',
-    datetime:dateTime()
-  });
+
+socket.on('send message to room', (data) => {
+  io.sockets.in('Common room').emit('send message to room client', {
+    msg:data.msg,
+    clientId:data.socketId,
+    datetime:dateTime(),
+    username:data.username
   });
 
- 
-  
+});
+
+socket.on('send message to specific client', (data) => {
+  io.to(data.clientId).emit('send message to specific server', {
+    clientId:data.socketId,
+    msg:data.msg,
+    username:data.username,   
+    datetime:dateTime()
+  });     
+});
+
+socket.on('send message to room specific admin', (data) => {
+  io.to(data.clientId).emit('send message to specific server admin', {
+    clientId:data.socketId,
+    msg:data.msg,
+    username:data.username,   
+    datetime:dateTime()
+  });     
+});
+
+
 });
 function dateTime(){
   var resp="";
