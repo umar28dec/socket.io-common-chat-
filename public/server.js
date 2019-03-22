@@ -81,7 +81,14 @@ socket.on('send message to room client', (data) => {
 	messagetext(msg);
 });
 
+socket.on('typing to all', (data) => { 
+	if (data.type == 'remove') {
+			$("#typing_uk_"+data.socketId).hide();
+	} else {
+		$("#typing_uk_"+data.socketId).css('display','inline-block');
 
+	}
+});
 
 });
 
@@ -184,6 +191,7 @@ function setID(id){
 	//creates markup for a new popup. Adds the id to popups array.
 	function register_popup(id, name)
 	{
+		var idclient=id;
 		id="uk_"+id;
 		sendid=id;
 		for(var iii = 0; iii < popups.length; iii++)
@@ -204,7 +212,7 @@ function setID(id){
 		
 		var element = '<div class="popup-box chat-popup" id="'+ id +'">';
 		element = element + '<div class="popup-head">';
-		element = element + '<div class="popup-head-left">'+ name +'</div>';
+		element = element + '<div class="popup-head-left">'+ name +'<span id="typing_'+id+'" style="display:none">&nbsp; is typing...</span></div>';
 		element = element + '<div class="popup-head-right"><a href="javascript:close_popup(\''+ id +'\');">&#10005;</a></div>';
 		element = element + '<div style="clear: both"></div></div><div id="msg_'+id+'" class="popup-messages"></div><div><input id="text_'+id+'"  autocomplete="off" class="message" type="text" name="message"></div></div>';
 		
@@ -215,6 +223,14 @@ function setID(id){
 		calculate_popups();		
 		var defaultId="#text_"+id;
 		$(defaultId).focus();
+		$(defaultId).bind('keyup keypres', function() { 
+			var msg = $("#message-text").val();
+			if (msg) {
+					socket.emit('typing', {type:'typing',socketId:idclient,id:socket.id});
+			} else {
+					socket.emit('typing', {type:'remove',socketId:idclient,id:socket.id});
+			}
+	});
 		$(defaultId).keydown(function(e) {
         if (e.which == 13) { 
 			sendMessage();
@@ -229,7 +245,14 @@ function setID(id){
 			sendMessage();
         }
 	});
- 
+	$("#text_"+sendid).bind('keyup keypres', function() {
+		var msg = $("#message-text").val();
+		if (msg) {
+				socket.emit('typing', {type:'typing',socketId:clientId,id:socket.id});
+		} else {
+				socket.emit('typing', {type:'remove',socketId:clientId,id:socket.id});
+		}
+});
 });
 
 

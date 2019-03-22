@@ -125,6 +125,12 @@ socket.on('send message to room specific admin', (data) => {
   });     
 });
 
+socket.on('typing', (data) => {
+  io.to(data.socketId).emit('typing to all', {
+    socketId:data.id,
+    type:data.type,
+    });
+  });
 
 });
 function dateTime(){

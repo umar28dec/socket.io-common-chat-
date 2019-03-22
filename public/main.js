@@ -67,6 +67,15 @@ $(function() {
     }
 });
 
+$("#message-text").bind('keyup keypres', function() {
+    var msg = $("#message-text").val();
+    if (msg) {
+        socket.emit('typing', {type:'typing',socketId:clientId,id:socket.id});
+    } else {
+        socket.emit('typing', {type:'remove',socketId:clientId,id:socket.id});
+    }
+});
+
 });
 const messagetext = (message1) => {
     $("#message").append(message1);
