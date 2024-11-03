@@ -12,7 +12,7 @@
   "dependencies": {
     "express": "^4.21.1",
     "iplocation": "^6.1.0",
-    "nodemon": "^1.18.10",
+    "nodemon": "^3.1.7",
     "socket.io": "^4.8.0"
   }
 }
